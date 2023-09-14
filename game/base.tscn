@@ -1,0 +1,53 @@
+[gd_scene load_steps=11 format=3 uid="uid://byelgh2wbujcu"]
+
+[ext_resource type="PackedScene" uid="uid://bf6fw1gthvr6w" path="res://game/player.tscn" id="1_n0n6m"]
+[ext_resource type="Script" path="res://game/base.gd" id="1_o8h42"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_d06jg"]
+
+[sub_resource type="Sky" id="Sky_avwtu"]
+sky_material = SubResource("ProceduralSkyMaterial_d06jg")
+
+[sub_resource type="Environment" id="Environment_sitcg"]
+background_mode = 2
+sky = SubResource("Sky_avwtu")
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_27v1v"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_hcgc8"]
+noise_type = 3
+seed = 3
+frequency = 0.0594
+fractal_gain = 0.86
+fractal_weighted_strength = 0.69
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_sm84k"]
+noise = SubResource("FastNoiseLite_hcgc8")
+
+[sub_resource type="ORMMaterial3D" id="ORMMaterial3D_hba2i"]
+albedo_color = Color(0.270588, 0.270588, 0.270588, 1)
+orm_texture = SubResource("NoiseTexture2D_sm84k")
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_14nhy"]
+data = PackedVector3Array(1, 0, 1, -1, 0, 1, 1, 0, -1, -1, 0, 1, -1, 0, -1, 1, 0, -1)
+
+[node name="Base" type="Node3D"]
+script = ExtResource("1_o8h42")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_sitcg")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.733338, 0.679864, 0, -0.679864, 0.733338, 0, 8.31176, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(343.782, 0, 0, 0, 343.782, 0, 0, 0, 343.782, 0, 0, 0)
+mesh = SubResource("PlaneMesh_27v1v")
+surface_material_override/0 = SubResource("ORMMaterial3D_hba2i")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="MeshInstance3D"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MeshInstance3D/StaticBody3D"]
+shape = SubResource("ConcavePolygonShape3D_14nhy")
+
+[node name="Player" parent="." instance=ExtResource("1_n0n6m")]
